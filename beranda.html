@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aplikasi Resep Masakan</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #e8f0e8; /* pastel hijau muda */
+    color: #4a6d4a; /* hijau pastel gelap */
+    margin: 0;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 15px 0;
+    background-color: #b3d9b3; /* hijau pastel medium */
+    color: #2f4d2f; /* hijau gelap */
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  h1 {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  /* Filter panel */
+  .filter-panel {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 25px;
+  }
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .filter-group label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #4a6d4a;
+  }
+  .filter-group select {
+    padding: 6px 10px;
+    border: 1.5px solid #4a6d4a;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #d6e9d6; /* hijau pastel cerah */
+    color: #355535;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .filter-group select:hover {
+    background-color: #c1d6c1;
+  }
+
+  /* Resep grid */
+  .resep-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+    gap: 18px;
+  }
+  .resep {
+    background: #f9fdf9; /* putih pastel */
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(74,109,74,0.15);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+  }
+  .resep:hover {
+    transform: translateY(-5px);
+  }
+  .resep img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+  }
+  .resep-content {
+    padding: 14px 16px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .resep-content h3 {
+    margin: 0 0 8px;
+    color: #3d6e3d;
+  }
+  .kategori {
+    font-size: 14px;
+    font-weight: 600;
+    color: #6b9a6b;
+    margin-bottom: 12px;
+    text-transform: capitalize;
+  }
+  button {
+    background-color: #88b788; /* hijau pastel */
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.25s ease;
+    margin-top: auto;
+  }
+  button:hover {
+    background-color: #5a7d5a;
+  }
+
+  .detail {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #547354;
+    display: none;
+  }
+  .detail strong {
+    color: #3d6e3d;
+  }
+  .detail ul {
+    padding-left: 20px;
+    margin-top: 4px;
+  }
+  .detail ol {
+    padding-left: 20px;
+    margin-top: 4px;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 400px) {
+    .filter-panel {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Aplikasi Resep Masakan</h1>
+  <p>Bingung Mau masak apa? Temukan resep anda disini 😋</p>
+</header>
+
+<div class="filter-panel">
+  <div class="filter-group">
+    <label for="filter-kategori">Kategori</label>
+    <select id="filter-kategori">
+      <option value="all">Semua Kategori</option>
+      <option value="sarapan">Sarapan</option>
+      <option value="makan siang">Makan Siang</option>
+      <option value="makan malam">Makan Malam</option>
+      <option value="dessert">Dessert</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label for="filter-asal">Asal Masakan</label>
+    <select id="filter-asal">
+      <option value="all">Semua Asal</option>
+      <option value="indonesia">Masakan Indonesia</option>
+      <option value="luar">Masakan Luar Negeri</option>
+    </select>
+  </div>
+</div>
+
+<div class="resep-container" id="resep-container">
+  <!-- Resep akan dimasukkan di sini -->
+</div>
+
+<script>
+  const resepData = [
+    // Masakan Indonesia
+    {
+      nama: "Nasi Goreng",
+      kategori: "sarapan",
+      asal: "indonesia",
+      gambar: "nasi goreng.jpg",
+      bahan: [
+        "Nasi putih",
+        "Bawang putih, bawang merah",
+        "Kecap manis, saus sambal",
+        "Telur, ayam atau udang",
+        "Garam, merica"
+      ],
+      cara: [
+        "Tumis bawang putih dan bawang merah hingga harum.",
+        "Masukkan telur dan orak-arik sampai matang.",
+        "Tambahkan ayam atau udang, tumis sebentar.",
+        "Masukkan nasi dan bumbu kecap, sambal, garam, merica.",
+        "Aduk rata dan masak hingga panas."
+      ]
+    },
+    {
+      nama: "Lontong Sayur",
+      kategori: "sarapan",
+      asal: "indonesia",
+      gambar: "lontong sayur.jpg",
+      bahan: [
+        "Lontong (ketupat)",
+        "Sayur labu siam, santan, daun salam, cabai, bumbu dasar",
+        "Telur rebus, sambal"
+      ],
+      cara: [
+        "Rebus sayur dengan bumbu dan santan sampai matang.",
+        "Sajikan lontong dengan kuah sayur, telur, dan sambal."
+      ]
+    },
+    {
+      nama: "Gado-Gado",
+      kategori: "makan siang",
+      asal: "indonesia",
+      gambar: "gado gado.jpg",
+      bahan: [
+        "Sayuran rebus (kentang, tauge, kacang panjang, kol)",
+        "Tahu, tempe goreng",
+        "Bumbu kacang, telur rebus"
+      ],
+      cara: [
+        "Siapkan sayuran dan goreng tahu tempe.",
+        "Campur bumbu kacang dengan air, gula, dan garam.",
+        "Campur semua bahan dan siram bumbu kacang."
+      ]
+    },
+    {
+      nama: "Ayam Bakar Bumbu Rujak",
+      kategori: "makan malam",
+      asal: "indonesia",
+      gambar: "ayam bakar.jpg",
+      bahan: [
+        "1 ekor ayam potong",
+        "Bumbu rujak (cabai, bawang merah, bawang putih, gula merah, terasi)",
+        "Air asam jawa, garam"
+      ],
+      cara: [
+        "Haluskan bumbu, lumuri ayam, diamkan 1 jam.",
+        "Bakar ayam sambil dioles sisa bumbu sampai matang dan harum."
+      ]
+    },
+    {
+      nama: "Es Cendol",
+      kategori: "dessert",
+      asal: "indonesia",
+      gambar: "cendol.jpg",
+      bahan: [
+        "Tepung beras, pandan, gula merah, santan, es batu"
+      ],
+      cara: [
+        "Buat cendol dari tepung beras dan pandan, cetak dan dinginkan.",
+        "Rebus gula merah buat sirup, campur dengan santan.",
+        "Sajikan cendol dengan sirup gula merah dan es batu."
+      ]
+    },
+    // Masakan Luar Negeri
+    {
+      nama: "Pancakes Amerika",
+      kategori: "sarapan",
+      asal: "luar",
+      gambar: "pancake.jpg",
+      bahan: [
+        "200g tepung terigu",
+        "2 sdm gula, 1 sdt baking powder, 1 butir telur, 250ml susu",
+        "Mentega dan sirup maple"
+      ],
+      cara: [
+        "Campur bahan kering, kocok telur dan susu, gabungkan.",
+        "Masak di wajan anti lengket hingga kecoklatan.",
+        "Sajikan dengan mentega dan sirup maple."
+      ]
+    },
+    {
+      nama: "Tacos Meksiko",
+      kategori: "makan siang",
+      asal: "luar",
+      gambar: "tacos.jpeg",
+      bahan: [
+        "Tortilla jagung",
+        "Daging cincang, bawang, cabai, tomat, keju, selada"
+      ],
+      cara: [
+        "Tumis daging dengan bumbu sampai matang.",
+        "Siapkan tortilla, isi dengan daging dan sayuran.",
+        "Tambahkan keju dan saus sesuai selera."
+      ]
+    },
+    {
+      nama: "Steak ala Barat",
+      kategori: "makan malam",
+      asal: "luar",
+      gambar: "steak.jpg",
+      bahan: [
+        "Potongan daging sapi premium",
+        "Mentega, bawang putih, rosemary, garam, merica"
+      ],
+      cara: [
+        "Bumbui daging dengan garam dan merica.",
+        "Masak di atas pan panas dengan mentega dan bawang putih.",
+        "Sajikan dengan kentang panggang dan sayuran."
+      ]
+    },
+    {
+      nama: "Cheesecake New York",
+      kategori: "dessert",
+      asal: "luar",
+      gambar: "ck.jpg",
+      bahan: [
+        "200g biskuit, 100g mentega, 600g cream cheese",
+        "150g gula, 3 butir telur, 100ml krim kental"
+      ],
+      cara: [
+        "Hancurkan biskuit, campur mentega, tekan ke loyang.",
+        "Kocok cream cheese, gula, telur, dan krim, tuang di atasnya.",
+        "Panggang selama 45 menit, dinginkan dan sajikan."
+      ]
+    }
+  ];
+
+  const resepContainer = document.getElementById('resep-container');
+  const filterKategori = document.getElementById('filter-kategori');
+  const filterAsal = document.getElementById('filter-asal');
+
+  function buatResepCard(resep) {
+    const card = document.createElement('div');
+    card.classList.add('resep');
+    card.setAttribute('data-kategori', resep.kategori);
+    card.setAttribute('data-asal', resep.asal);
+
+    card.innerHTML = `
+      <img src="${resep.gambar}" alt="${resep.nama}" />
+      <div class="resep-content">
+        <h3>${resep.nama}</h3>
+        <div class="kategori">${resep.kategori} - ${resep.asal === 'indonesia' ? 'Indonesia' : 'Luar Negeri'}</div>
+        <button>Lihat Resep</button>
+        <div class="detail">
+          <strong>Bahan:</strong>
+          <ul>${resep.bahan.map(b => `<li>${b}</li>`).join('')}</ul>
+          <strong>Cara Membuat:</strong>
+          <ol>${resep.cara.map(c => `<li>${c}</li>`).join('')}</ol>
+        </div>
+      </div>
+    `;
+
+    const btn = card.querySelector('button');
+    const detailDiv = card.querySelector('.detail');
+    btn.addEventListener('click', () => {
+      if (detailDiv.style.display === 'block') {
+        detailDiv.style.display = 'none';
+        btn.textContent = 'Lihat Resep';
+      } else {
+        detailDiv.style.display = 'block';
+        btn.textContent = 'Sembunyikan Resep';
+      }
+    });
+
+    return card;
+  }
+
+  function tampilkanResep() {
+    resepContainer.innerHTML = '';
+    const kategoriTerpilih = filterKategori.value;
+    const asalTerpilih = filterAsal.value;
+
+    let filtered = resepData;
+
+    if (kategoriTerpilih !== 'all') {
+      filtered = filtered.filter(r => r.kategori === kategoriTerpilih);
+    }
+    if (asalTerpilih !== 'all') {
+      filtered = filtered.filter(r => r.asal === asalTerpilih);
+    }
+
+    if (filtered.length === 0) {
+      resepContainer.innerHTML = '<p style="text-align:center; color:#6b9a6b; font-weight:600;">Resep tidak ditemukan untuk filter ini.</p>';
+      return;
+    }
+
+    filtered.forEach(resep => {
+      resepContainer.appendChild(buatResepCard(resep));
+    });
+  }
+
+  filterKategori.addEventListener('change', tampilkanResep);
+  filterAsal.addEventListener('change', tampilkanResep);
+
+  tampilkanResep();
+</script>
+
+</body>
+</html>
